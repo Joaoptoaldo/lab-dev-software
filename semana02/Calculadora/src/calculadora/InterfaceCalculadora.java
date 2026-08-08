@@ -303,14 +303,29 @@ public class InterfaceCalculadora extends javax.swing.JFrame {
 
     private void btnDivisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDivisaoActionPerformed
         // TODO add your handling code here:
+        lblValor.setText(txtResultado.getText()+"/");
+        n1 = Double.parseDouble(txtResultado.getText());
+        operacao =  "divisao";
+        
+        txtResultado.setText("");
     }//GEN-LAST:event_btnDivisaoActionPerformed
 
     private void btnMultiplicacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMultiplicacaoActionPerformed
         // TODO add your handling code here:
+        lblValor.setText(txtResultado.getText()+"*");
+        n1 = Double.parseDouble(txtResultado.getText());
+        operacao =  "multiplicacao";
+        
+        txtResultado.setText("");
     }//GEN-LAST:event_btnMultiplicacaoActionPerformed
 
     private void btnSubtracaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubtracaoActionPerformed
         // TODO add your handling code here:
+        lblValor.setText(txtResultado.getText()+"-");
+        n1 = Double.parseDouble(txtResultado.getText());
+        operacao =  "subtracao";
+        
+        txtResultado.setText("");
     }//GEN-LAST:event_btnSubtracaoActionPerformed
 
     private void btn9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn9ActionPerformed
@@ -383,9 +398,28 @@ public class InterfaceCalculadora extends javax.swing.JFrame {
         n2 = Double.parseDouble(txtResultado.getText());
         if (operacao == "soma"){
             resultado = n1 + n2;
-            lblValor.setText(n1+"+"+n2"=");
-            //lblValor.setText(n1 +"+"+n2"=");
+            lblValor.setText(n1 + "+" + n2 + "=");
             txtResultado.setText(String.valueOf(resultado));
+        }
+        if (operacao == "subtracao"){
+            resultado = n1 - n2;
+            lblValor.setText(n1 + "-" + n2 + "=");
+            txtResultado.setText(String.valueOf(resultado));
+        }
+        if (operacao == "multiplicacao"){
+            resultado = n1 * n2;
+            lblValor.setText(n1 + "*" + n2 + "=");
+            txtResultado.setText(String.valueOf(resultado));
+        }
+        if (operacao == "divisao"){
+            if (n2 == 0){
+                lblValor.setText(n1 + "/" + n2 + "=");
+                txtResultado.setText("Erro!");
+            }else{
+                resultado = n1 / n2;
+                lblValor.setText(n1 + "/" + n2 + "=");
+                txtResultado.setText(String.valueOf(resultado));
+            }
         }
     }//GEN-LAST:event_btnResultadoActionPerformed
 
