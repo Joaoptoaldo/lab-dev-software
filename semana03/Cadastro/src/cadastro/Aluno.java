@@ -20,7 +20,7 @@ public class Aluno {
     private String telefone;
 
     public Aluno(String nomeCompleto, String dataNascimento, String sexo, String matricula, 
-                 String curso, String cpf, String enderecoCompleto, String estado, String telefone) {
+                   String curso, String cpf, String enderecoCompleto, String estado, String telefone) {
         this.nomeCompleto = nomeCompleto;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
@@ -42,6 +42,47 @@ public class Aluno {
                cpf + ";" + 
                enderecoCompleto + ";" + 
                estado + ";" + 
-               telefone + "\n";
+               telefone;
+    }
+
+
+    public String getNomeCompleto() {
+        return nomeCompleto;
+    }
+
+    public String getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getEnderecoCompleto() {
+        return enderecoCompleto;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getNome() {
+        return nomeCompleto;
     }
 }

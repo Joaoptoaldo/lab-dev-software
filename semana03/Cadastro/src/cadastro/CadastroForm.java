@@ -4,6 +4,8 @@
  */
 package cadastro;
 
+import java.util.List;
+
 /**
  *
  * @author laboratorio
@@ -11,12 +13,39 @@ package cadastro;
 public class CadastroForm extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CadastroForm.class.getName());
+    
+    
+    private Arquivo arquivo;
+    private List<Aluno> listaAlunos;
 
     /**
      * Creates new form CadastroForm
      */
     public CadastroForm() {
         initComponents();
+        arquivo = new Arquivo("dados_alunos");
+        listaAlunos = arquivo.lerArquivo();
+        atualizarTabela();
+    }
+    
+    
+    private void atualizarTabela() {
+    javax.swing.table.DefaultTableModel modeloTabela = (javax.swing.table.DefaultTableModel) tblAlunos.getModel();
+        modeloTabela.setRowCount(0); // Limpa a tabela antes de preencher
+        
+        for (Aluno a : listaAlunos) {
+            modeloTabela.addRow(new Object[]{
+                a.getNome(),
+                a.getDataNascimento(),
+                a.getSexo(),
+                a.getMatricula(),
+                a.getCurso(),
+                a.getCpf(),
+                a.getEnderecoCompleto(),
+                a.getEstado(),
+                a.getTelefone()
+            });
+        }
     }
 
     /**
@@ -48,8 +77,8 @@ public class CadastroForm extends javax.swing.JFrame {
         cmbEstado = new javax.swing.JComboBox<>();
         lblTelefone = new javax.swing.JLabel();
         txtTelefone = new javax.swing.JTextField();
-        txaArea = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAlunos = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,18 +136,27 @@ public class CadastroForm extends javax.swing.JFrame {
 
         lblTelefone.setText("Telefone:");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        txaArea.setViewportView(jTextArea1);
+        tblAlunos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Data de Nascimento", "Sexo", "Matricula", "Curso", "CPF", "Endereço", "Estado", "Telefone"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAlunos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSalvar)
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txaArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblCpf)
@@ -143,10 +181,9 @@ public class CadastroForm extends javax.swing.JFrame {
                             .addComponent(txtCpf)
                             .addComponent(txtEndereco)
                             .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTelefone))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                .addComponent(btnSalvar)
-                .addGap(15, 15, 15))
+                            .addComponent(txtTelefone)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 26, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,14 +225,11 @@ public class CadastroForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTelefone)
                     .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnSalvar)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txaArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15))))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSalvar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -212,14 +246,27 @@ public class CadastroForm extends javax.swing.JFrame {
         String endereco = txtEndereco.getText();
         String estado = cmbEstado.getSelectedItem().toString(); 
         String telefone = txtTelefone.getText();
-    
+
+        // cria objeto Aluno
         Aluno aluno = new Aluno(nome, nascimento, sexo, matricula, curso, cpf, endereco, estado, telefone);
-    
-        // 3. Adicionar no JTextArea (ex: jTextArea1 ou txaAlunos)
-        jTextArea1.append(aluno.toString());
-    
-    // Opcional: limpar os campos após salvar
-    // txtNome.setText("");
+
+        // adiciona na lista principal
+        listaAlunos.add(aluno);
+
+        arquivo.gravarArquivo(listaAlunos);
+
+        atualizarTabela();
+
+        txtNome.setText("");
+        txtDataNasc.setText("");
+        txtMatricula.setText("");
+        txtCurso.setText("");
+        txtCpf.setText("");
+        txtEndereco.setText("");
+        txtTelefone.setText("");
+        txtNome.requestFocus();
+
+        // txtNome.setText("");
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
@@ -267,7 +314,7 @@ public class CadastroForm extends javax.swing.JFrame {
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox<String> cmbEstado;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCpf;
     private javax.swing.JLabel lblCurso;
     private javax.swing.JLabel lblDataNasc;
@@ -278,7 +325,7 @@ public class CadastroForm extends javax.swing.JFrame {
     private javax.swing.JLabel lblTelefone;
     private javax.swing.JRadioButton rdo_Feminino;
     private javax.swing.JRadioButton rdo_Masculino;
-    private javax.swing.JScrollPane txaArea;
+    private javax.swing.JTable tblAlunos;
     private javax.swing.JTextField txtCpf;
     private javax.swing.JTextField txtCurso;
     private javax.swing.JTextField txtDataNasc;

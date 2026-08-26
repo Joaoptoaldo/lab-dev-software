@@ -4,7 +4,9 @@
  */
 package projeto04;
 
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -16,11 +18,29 @@ public class FormProjeto04 extends javax.swing.JFrame {
     
     public char sexo;
     public boolean astronomia, tecnologia, esportes;
+    private Arquivo arquivo;
+    private List<Pessoa> listaPessoas;
     /**
      * Creates new form FormProjeto04
      */
     public FormProjeto04() {
         initComponents();
+        arquivo = new Arquivo("pessoas");
+        listaPessoas = arquivo.lerArquivo();
+        carregarTabela();
+    }
+    
+    private void carregarTabela() {
+        
+        DefaultTableModel tabela = (DefaultTableModel) tbl_Pessoas.getModel();
+        
+        tabela.setRowCount(0);
+        
+        for (Pessoa p : listaPessoas) {
+            tabela.addRow(p.obterDados());
+        }
+                
+                
     }
 
     /**
@@ -43,10 +63,10 @@ public class FormProjeto04 extends javax.swing.JFrame {
         lblInteresses = new javax.swing.JLabel();
         chk_Astronomia = new javax.swing.JCheckBox();
         chk_Esportes = new javax.swing.JCheckBox();
-        txaPessoas = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        cmb_idioma = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
+        cmb_Idioma = new javax.swing.JComboBox<>();
+        lblIdioma = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_Pessoas = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -94,26 +114,28 @@ public class FormProjeto04 extends javax.swing.JFrame {
 
         chk_Esportes.setText("Esportes");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        txaPessoas.setViewportView(jTextArea1);
+        cmb_Idioma.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Espanhol", "Inglês", "Português", " " }));
 
-        cmb_idioma.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Espanhol", "Inglês", "Português", " " }));
+        lblIdioma.setText("Lingua:");
 
-        jLabel1.setText("Lingua:");
+        tbl_Pessoas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Sexo", "Idioma"
+            }
+        ));
+        jScrollPane2.setViewportView(tbl_Pessoas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txaPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSalvar))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(lblNome)
@@ -128,17 +150,19 @@ public class FormProjeto04 extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(lblInteresses)
-                                .addComponent(jLabel1))
+                                .addComponent(lblIdioma))
                             .addGap(24, 24, 24)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(cmb_idioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cmb_Idioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(chk_Tecnologia)
                                     .addGap(29, 29, 29)
                                     .addComponent(chk_Astronomia)
                                     .addGap(18, 18, 18)
-                                    .addComponent(chk_Esportes))))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                                    .addComponent(chk_Esportes)))))
+                    .addComponent(btnSalvar, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,13 +184,13 @@ public class FormProjeto04 extends javax.swing.JFrame {
                     .addComponent(chk_Esportes))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(cmb_idioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnSalvar, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txaPessoas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24))
+                    .addComponent(lblIdioma)
+                    .addComponent(cmb_Idioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnSalvar)
+                .addContainerGap())
         );
 
         pack();
@@ -185,36 +209,54 @@ public class FormProjeto04 extends javax.swing.JFrame {
     }//GEN-LAST:event_rdo_FemininoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:        
+        // TODO add your handling code here:      
+        if(rdo_Masculino.isSelected()){
+            sexo = 'M';
+            JOptionPane.showMessageDialog(null, "Sexo selecionado","Alerta!", JOptionPane.OK_OPTION );
+        }
+        else if (rdo_Feminino.isSelected()){
+            sexo = 'F';
+            JOptionPane.showMessageDialog(null, "Sexo selecionado","Alerta!", JOptionPane.OK_OPTION );
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Selecione um sexo","ERRO!", JOptionPane.OK_OPTION );
+            return;
+        }
+        
         tecnologia = chk_Tecnologia.isSelected();
-        
         astronomia = chk_Astronomia.isSelected();
-        
         esportes = chk_Esportes.isSelected();
-        
         
         JOptionPane.showMessageDialog(null, "Tecnologia " + tecnologia 
                 + "\nAstronomia " + astronomia 
                 + "\nEsportes " + esportes 
                 + "\n", "Alerta!", JOptionPane.INFORMATION_MESSAGE);
         
-        if(rdo_Masculino.isSelected()){
-            sexo = 'M';
-            
-            JOptionPane.showMessageDialog(null, "Sexo selecionado","Alerta!", JOptionPane.OK_OPTION );
-            Pessoa pessoa = new Pessoa(txaArea.getText(), sexo, cmb_idioma.getSelectedItem()+"");
-            jTextArea1.append(pessoa.toString() + "\n");
-        }
-        else if (rdo_Feminino.isSelected()){
-            sexo = 'F';
-            
-            JOptionPane.showMessageDialog(null, "Sexo selecionado","Alerta!", JOptionPane.OK_OPTION );
-            Pessoa pessoa = new Pessoa(txaArea.getText(), sexo, cmb_idioma.getSelectedItem()+"");
-            jTextArea1.append(pessoa.toString() + "\n");
-        }
         
-        else{
-            JOptionPane.showMessageDialog(null, "Selecione um sexo","ERRO!", JOptionPane.OK_OPTION );
+        // criação do objeto Pessoa
+        String idioma = cmb_Idioma.getSelectedItem() + "";
+        Pessoa p = new Pessoa (txaArea.getText(), sexo, (String) cmb_Idioma.getSelectedItem());
+        
+        // Adiciona na Tabela Visual
+        DefaultTableModel tabela = (DefaultTableModel) tbl_Pessoas.getModel();
+        tabela.addRow(p.obterDados());
+        
+        // limpa os campos do formulário
+        txaArea.setText("");
+        btnGrp_Sexo.clearSelection();
+        chk_Tecnologia.setSelected(false);
+        chk_Astronomia.setSelected(false);
+        chk_Esportes.setSelected(false);
+        cmb_Idioma.setSelectedIndex(0);
+        
+        // adiciona na lista e grava no arquivo
+        listaPessoas.add(p);
+        arquivo.gravarArquivo();
+        
+        System.out.println("Pessoa adicionada!");
+        
+        for (Pessoa pessoa : listaPessoas) {
+            System.out.println(pessoa);
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
@@ -249,15 +291,15 @@ public class FormProjeto04 extends javax.swing.JFrame {
     private javax.swing.JCheckBox chk_Astronomia;
     private javax.swing.JCheckBox chk_Esportes;
     private javax.swing.JCheckBox chk_Tecnologia;
-    private javax.swing.JComboBox<String> cmb_idioma;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JComboBox<String> cmb_Idioma;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblIdioma;
     private javax.swing.JLabel lblInteresses;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblSexo;
     private javax.swing.JRadioButton rdo_Feminino;
     private javax.swing.JRadioButton rdo_Masculino;
+    private javax.swing.JTable tbl_Pessoas;
     private javax.swing.JTextField txaArea;
-    private javax.swing.JScrollPane txaPessoas;
     // End of variables declaration//GEN-END:variables
 }
