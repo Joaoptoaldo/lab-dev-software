@@ -17,6 +17,7 @@ public class CadastroForm extends javax.swing.JFrame {
     
     private Arquivo arquivo;
     private List<Aluno> listaAlunos;
+    private int linhaEdicao = -1;
 
     /**
      * Creates new form CadastroForm
@@ -57,6 +58,7 @@ public class CadastroForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btnGrp_Sexo = new javax.swing.ButtonGroup();
         btnSalvar = new javax.swing.JButton();
         txtNome = new javax.swing.JTextField();
         lblNome = new javax.swing.JLabel();
@@ -79,6 +81,8 @@ public class CadastroForm extends javax.swing.JFrame {
         txtTelefone = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAlunos = new javax.swing.JTable();
+        btnEditar = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,6 +111,7 @@ public class CadastroForm extends javax.swing.JFrame {
 
         lblSexo.setText("Sexo: ");
 
+        btnGrp_Sexo.add(rdo_Masculino);
         rdo_Masculino.setText("Masculino");
         rdo_Masculino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,6 +119,7 @@ public class CadastroForm extends javax.swing.JFrame {
             }
         });
 
+        btnGrp_Sexo.add(rdo_Feminino);
         rdo_Feminino.setText("Feminino");
 
         lblMatricula.setText("Matricula:");
@@ -146,12 +152,30 @@ public class CadastroForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblAlunos);
 
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEditar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnExcluir)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSalvar)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
@@ -250,15 +274,25 @@ public class CadastroForm extends javax.swing.JFrame {
         // cria objeto Aluno
         Aluno aluno = new Aluno(nome, nascimento, sexo, matricula, curso, cpf, endereco, estado, telefone);
 
-        // adiciona na lista principal
-        listaAlunos.add(aluno);
+        // verifica se está adicionando ou editando
+        if (linhaEdicao == -1) {
+            // modo inserção: adiciona novo aluno na lista
+            listaAlunos.add(aluno);
+        } else {
+            // modo edição: substitui o aluno na posição correta
+            listaAlunos.set(linhaEdicao, aluno);
+            linhaEdicao = -1; // reseta o controle de edição
+        }
 
         arquivo.gravarArquivo(listaAlunos);
 
         atualizarTabela();
 
+        // limpa os campos do formulário
         txtNome.setText("");
         txtDataNasc.setText("");
+        rdo_Masculino.setSelected(false);
+        rdo_Feminino.setSelected(false);
         txtMatricula.setText("");
         txtCurso.setText("");
         txtCpf.setText("");
@@ -286,6 +320,90 @@ public class CadastroForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txtMatriculaActionPerformed
 
     /**
+     * método que é chamado quando o botão "Editar" é clicado
+     * @param evt evento de ação do botão "Editar"
+     */
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int linha = tblAlunos.getSelectedRow();
+
+        if (linha == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    null,
+                    "Selecione um aluno para editar.",
+                    "Atenção",
+                    javax.swing.JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // salva a posição da linha que está sendo editada
+        linhaEdicao = linha;
+
+        // pega o objeto Aluno da lista
+        Aluno a = listaAlunos.get(linha);
+
+        // preenche os campos do formulário com os dados do aluno
+        txtNome.setText(a.getNomeCompleto());
+        txtDataNasc.setText(a.getDataNascimento());
+
+        if (a.getSexo().equals("Masculino")) {
+            rdo_Masculino.setSelected(true);
+        } else {
+            rdo_Feminino.setSelected(true);
+        }
+
+        txtMatricula.setText(a.getMatricula());
+        txtCurso.setText(a.getCurso());
+        txtCpf.setText(a.getCpf());
+        txtEndereco.setText(a.getEnderecoCompleto());
+        cmbEstado.setSelectedItem(a.getEstado());
+        txtTelefone.setText(a.getTelefone());
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    /**
+     * método que é chamado quando o botão "Excluir" é clicado. Ele remove o aluno selecionado da lista e atualiza a tabela
+     * @param evt evento de ação do botão "Excluir"
+     */
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int linha = tblAlunos.getSelectedRow();
+
+        if (linha == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    null,
+                    "Selecione um aluno para excluir.",
+                    "Atenção",
+                    javax.swing.JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        int resposta = javax.swing.JOptionPane.showConfirmDialog(
+                null,
+                "Deseja realmente excluir este aluno?",
+                "Confirmação",
+                javax.swing.JOptionPane.YES_NO_OPTION
+        );
+
+        if (resposta == javax.swing.JOptionPane.YES_OPTION) {
+            // Remove da lista em memória
+            listaAlunos.remove(linha);
+
+            // Grava a lista atualizada no arquivo
+            arquivo.gravarArquivo(listaAlunos);
+
+            // Remove a linha da tabela
+            javax.swing.table.DefaultTableModel modeloTabela
+                    = (javax.swing.table.DefaultTableModel) tblAlunos.getModel();
+            modeloTabela.removeRow(linha);
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    null,
+                    "Aluno excluído com sucesso!"
+            );
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -311,6 +429,9 @@ public class CadastroForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup btnGrp_Sexo;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox<String> cmbEstado;
     private javax.swing.JLabel jLabel1;
