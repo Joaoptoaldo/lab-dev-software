@@ -4,6 +4,8 @@
  */
 package projetodb;
 
+import view.pessoaView;
+
 /**
  *
  * @author laboratorio
@@ -14,7 +16,8 @@ public class ProjetoDB {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        pessoaView view = new pessoaView();
+        view.setVisible(true);
     }
-    
+
 }
