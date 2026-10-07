@@ -42,8 +42,28 @@ public class pessoaView extends javax.swing.JFrame {
         lblIdioma = new javax.swing.JLabel();
         cmb_Idioma = new javax.swing.JComboBox<>();
         btnSalvar = new javax.swing.JButton();
+        lblId = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        btnConsultar = new javax.swing.JButton();
+        btnAtualizar = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lblId.setText("ID:");
+
+        txtId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdActionPerformed(evt);
+            }
+        });
+
+        btnConsultar.setText("Consultar");
+        btnConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultarActionPerformed(evt);
+            }
+        });
 
         lblNome.setText("Nome:");
 
@@ -82,6 +102,20 @@ public class pessoaView extends javax.swing.JFrame {
             }
         });
 
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarActionPerformed(evt);
+            }
+        });
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -89,6 +123,12 @@ public class pessoaView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblId)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConsultar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblIdioma)
                         .addGap(18, 18, 18)
@@ -103,17 +143,24 @@ public class pessoaView extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(rdo_Masculino)
                                 .addGap(34, 34, 34)
-                                .addComponent(rdo_Feminino)))))
+                                .addComponent(rdo_Feminino))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnSalvar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAtualizar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnExcluir)))
                 .addContainerGap(104, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSalvar)
-                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblId)
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConsultar))
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNome)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -127,7 +174,10 @@ public class pessoaView extends javax.swing.JFrame {
                     .addComponent(lblIdioma)
                     .addComponent(cmb_Idioma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
-                .addComponent(btnSalvar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvar)
+                    .addComponent(btnAtualizar)
+                    .addComponent(btnExcluir))
                 .addGap(21, 21, 21))
         );
 
@@ -137,6 +187,10 @@ public class pessoaView extends javax.swing.JFrame {
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNomeActionPerformed
+
+    private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
 
     private void rdo_MasculinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdo_MasculinoActionPerformed
         // TODO add your handling code here:
@@ -159,10 +213,74 @@ public class pessoaView extends javax.swing.JFrame {
         pdao.inserir(p);
         JOptionPane.showMessageDialog(null, "Salvamento efetuado com sucesso", "Mensagem", JOptionPane.OK_OPTION);
         limparFormulario();
- 
+
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int id = Integer.parseInt(txtId.getText());
+            PessoaDAO pdao = new PessoaDAO();
+            Pessoa p = pdao.getPessoa(id);
+
+            if (p == null) {
+                limparFormulario();
+                JOptionPane.showMessageDialog(null, "Pessoa não encontrada!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            } else {
+                txtId.setText(String.valueOf(p.getId()));
+                txtNome.setText(p.getNome());
+
+                if ("M".equals(p.getSexo())) {
+                    rdo_Masculino.setSelected(true);
+                } else {
+                    rdo_Feminino.setSelected(true);
+                }
+
+                cmb_Idioma.setSelectedItem(p.getIdioma());
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "ID deve ser um número inteiro", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int id = Integer.parseInt(txtId.getText());
+            Pessoa p = new Pessoa();
+            p.setId(id);
+            p.setNome(txtNome.getText()+"");
+            if(rdo_Masculino.isSelected())
+                p.setSexo("M");
+            else
+                p.setSexo("F");
+            p.setIdioma(cmb_Idioma.getSelectedItem()+"");
+
+            PessoaDAO pdao = new PessoaDAO();
+            pdao.editar(p);
+            JOptionPane.showMessageDialog(null, "Atualização efetuada com sucesso", "Mensagem", JOptionPane.OK_OPTION);
+            limparFormulario();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "ID deve ser um número inteiro", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int id = Integer.parseInt(txtId.getText());
+            int confirmacao = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                PessoaDAO pdao = new PessoaDAO();
+                pdao.excluir(id);
+                JOptionPane.showMessageDialog(null, "Exclusão efetuada com sucesso", "Mensagem", JOptionPane.OK_OPTION);
+                limparFormulario();
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "ID deve ser um número inteiro", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
     private void limparFormulario() {
+        txtId.setText("");
         txtNome.setText("");
         btnGrup.clearSelection();
         cmb_Idioma.setSelectedIndex(0);
@@ -196,12 +314,17 @@ public class pessoaView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup btnGrup;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JButton btnConsultar;
+    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JComboBox<String> cmb_Idioma;
+    private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblIdioma;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblSexo;
     private javax.swing.JRadioButton rdo_Feminino;
     private javax.swing.JRadioButton rdo_Masculino;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }
