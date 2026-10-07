@@ -78,7 +78,7 @@ public class PessoaDAO {
     public void excluir(int id) {
         try {
             String sql = "DELETE FROM pessoa WHERE id = ?";
-            PreparedStatement stmt = this.conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
 
             stmt.execute();
@@ -86,5 +86,56 @@ public class PessoaDAO {
             System.out.println("Erro ao excluir pessoa: " + ex.getMessage());
         }
     }
+    public List<Pessoa> getPessoas() {
+        
+        String sql = "SELECT * FROM pessoa?";
+        
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
+            ResultSet rs = stmt.executeQuery();
+            List<Pessoa> listaPessoas = new ArrayList();
+            
+            while (rs.next()) {
+                Pessoa p = new Pessoa();
+                p.setId(rs.getInt("id"));
+                p.setNome(rs.getString("nome"));
+                p.setSexo(rs.getString("sexo"));
+                p.setIdioma(rs.getString("idioma"));
+                listaPessoas.add(p);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao consultar pessoa: " + ex.getMessage());
+        }
+        return null;
+    }
+    
+    public List<Pessoa> getPessoasNome (String nome, String sexo) {
+        
+        String sql =  "SELECT * FROM pessoa WHERE nome LIKE ? AND sexo LIKE ?";
+        
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            
+            stmt.setString(1,"%" + nome + "%");
+            stmt.setString(2,"%" + sexo + "%");
+            ResultSet rs = stmt.executeQuery();
+            
+            List<Pessoa> listaPessoas = new ArrayList();
+            
+             while (rs.next()) {
+                Pessoa p = new Pessoa();
+                p.setId(rs.getInt("id"));
+                p.setNome(rs.getString("nome"));
+                p.setSexo(rs.getString("sexo"));
+                p.setIdioma(rs.getString("idioma"));
+                listaPessoas.add(p);
+            }
+             return listaPessoas;
+            
+        } catch (SQLException ex) {
+            System.out.println("Erro ao consultar pessoa: " + ex.getMessage());
+            return null;
+        }
+    }
 }
