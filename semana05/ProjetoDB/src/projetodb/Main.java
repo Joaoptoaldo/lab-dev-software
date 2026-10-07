@@ -15,13 +15,22 @@ import dao.PessoaDAO;
 public class Main {
     public static void main(String[] args) {
         Conexao c = new Conexao();
-        c.getConexao();
-        
-        Pessoa p = new Pessoa();
-        p.setNome("João Pedro");
-        p.setIdioma("Portugues");
-        p.setSexo("M");
-        PessoaDAO pdao = new PessoaDAO();
-        pdao.inserir(p);
+        java.sql.Connection conn = c.getConexao();
+
+        if (conn != null) {
+            Pessoa p = new Pessoa();
+            p.setNome("João Pedro");
+            p.setIdioma("Portugues");
+            p.setSexo("M");
+            PessoaDAO pdao = new PessoaDAO();
+            pdao.inserir(p);
+
+            try {
+                conn.close();
+                System.out.println("Conexão fechada com sucesso!");
+            } catch (java.sql.SQLException ex) {
+                System.out.println("Erro ao fechar conexão: " + ex.getMessage());
+            }
+        }
     }
 }

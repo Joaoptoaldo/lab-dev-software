@@ -4,7 +4,7 @@
  */
 package projetodb;
 
-import view.pessoaView;
+import view.MenuPrincipal;
 
 /**
  *
@@ -16,7 +16,7 @@ public class ProjetoDB {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        pessoaView view = new pessoaView();
+        MenuPrincipal view = new MenuPrincipal();
         view.setVisible(true);
     }
 

@@ -68,7 +68,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         jMenu4.add(jMenuItem1);
 
-        jMenu1.setText("Editar e exlcuir Pessoas");
+        jMenu1.setText("Editar e excluir Pessoas");
         jMenu4.add(jMenu1);
 
         jMenuBar1.add(jMenu4);

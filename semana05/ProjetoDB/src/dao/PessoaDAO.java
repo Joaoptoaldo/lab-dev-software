@@ -34,6 +34,7 @@ public class PessoaDAO {
             stmt.setString(3, pessoa.getIdioma());
 
             stmt.execute();
+            stmt.close();
         } catch (SQLException ex) {
             System.out.println("Error ao inserir pessoa" + ex.getMessage());
         }
@@ -52,8 +53,12 @@ public class PessoaDAO {
                 p.setNome(rs.getString("nome"));
                 p.setSexo(rs.getString("sexo"));
                 p.setIdioma(rs.getString("idioma"));
+                rs.close();
+                stmt.close();
                 return p;
             }
+            rs.close();
+            stmt.close();
         } catch (SQLException ex) {
             System.out.println("Erro ao consultar pessoa: " + ex.getMessage());
         }
@@ -70,6 +75,7 @@ public class PessoaDAO {
             stmt.setInt(4, pessoa.getId());
 
             stmt.execute();
+            stmt.close();
         } catch (SQLException ex) {
             System.out.println("Erro ao editar pessoa: " + ex.getMessage());
         }
@@ -82,20 +88,21 @@ public class PessoaDAO {
             stmt.setInt(1, id);
 
             stmt.execute();
+            stmt.close();
         } catch (SQLException ex) {
             System.out.println("Erro ao excluir pessoa: " + ex.getMessage());
         }
     }
     public List<Pessoa> getPessoas() {
-        
-        String sql = "SELECT * FROM pessoa?";
-        
+
+        String sql = "SELECT * FROM pessoa";
+
         try {
             PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
             ResultSet rs = stmt.executeQuery();
-            List<Pessoa> listaPessoas = new ArrayList();
-            
+            List<Pessoa> listaPessoas = new ArrayList<Pessoa>();
+
             while (rs.next()) {
                 Pessoa p = new Pessoa();
                 p.setId(rs.getInt("id"));
@@ -104,6 +111,9 @@ public class PessoaDAO {
                 p.setIdioma(rs.getString("idioma"));
                 listaPessoas.add(p);
             }
+            rs.close();
+            stmt.close();
+            return listaPessoas;
         } catch (SQLException ex) {
             System.out.println("Erro ao consultar pessoa: " + ex.getMessage());
         }
@@ -111,18 +121,18 @@ public class PessoaDAO {
     }
     
     public List<Pessoa> getPessoasNome (String nome, String sexo) {
-        
+
         String sql =  "SELECT * FROM pessoa WHERE nome LIKE ? AND sexo LIKE ?";
-        
+
         try {
             PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            
+
             stmt.setString(1,"%" + nome + "%");
             stmt.setString(2,"%" + sexo + "%");
             ResultSet rs = stmt.executeQuery();
-            
-            List<Pessoa> listaPessoas = new ArrayList();
-            
+
+            List<Pessoa> listaPessoas = new ArrayList<Pessoa>();
+
              while (rs.next()) {
                 Pessoa p = new Pessoa();
                 p.setId(rs.getInt("id"));
@@ -131,8 +141,10 @@ public class PessoaDAO {
                 p.setIdioma(rs.getString("idioma"));
                 listaPessoas.add(p);
             }
+             rs.close();
+             stmt.close();
              return listaPessoas;
-            
+
         } catch (SQLException ex) {
             System.out.println("Erro ao consultar pessoa: " + ex.getMessage());
             return null;
