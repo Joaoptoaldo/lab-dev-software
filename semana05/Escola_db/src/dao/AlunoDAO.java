@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AlunoDAO {
 
@@ -84,5 +86,27 @@ public class AlunoDAO {
         } catch (SQLException ex) {
             System.out.println("Erro ao atualizar aluno: " + ex.getMessage());
         }
+    }
+
+    public List<Object[]> listarPorNome(String nome) {
+        List<Object[]> alunos = new ArrayList<>();
+        String sql = "SELECT id, nome, idade, curso FROM alunos WHERE nome LIKE ? ORDER BY nome";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nome + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                alunos.add(new Object[]{
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getInt("idade"),
+                    rs.getString("curso")
+                });
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao listar alunos: " + ex.getMessage());
+        }
+
+        return alunos;
     }
 }

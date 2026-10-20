@@ -4,11 +4,7 @@
  */
 package principal;
 
-import dao.AlunoDAO;
-import dao.ProfessorDAO;
-import beans.Aluno;
-import beans.Professor;
-import conexao.Conexao;
+import view.MenuPrincipal;
 
 /**
  *
@@ -16,9 +12,7 @@ import conexao.Conexao;
  */
 public class Principal {
     public static void main(String[] args) {
-        Conexao c = new Conexao();
-        c.getConexao();
-        
+        java.awt.EventQueue.invokeLater(() -> new MenuPrincipal().setVisible(true));
     }
     
 }
