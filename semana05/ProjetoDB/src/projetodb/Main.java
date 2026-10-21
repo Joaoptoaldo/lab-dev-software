@@ -18,13 +18,6 @@ public class Main {
         java.sql.Connection conn = c.getConexao();
 
         if (conn != null) {
-            Pessoa p = new Pessoa();
-            p.setNome("João Pedro");
-            p.setIdioma("Portugues");
-            p.setSexo("M");
-            PessoaDAO pdao = new PessoaDAO();
-            pdao.inserir(p);
-
             try {
                 conn.close();
                 System.out.println("Conexão fechada com sucesso!");
