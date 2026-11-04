@@ -20,6 +20,7 @@ public class FormProfessor extends javax.swing.JFrame {
      */
     public FormProfessor() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -41,6 +42,7 @@ public class FormProfessor extends javax.swing.JFrame {
         cmbDisciplina = new javax.swing.JComboBox<>();
         btnConsultar = new javax.swing.JButton();
         btnAtualizar = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
         txtID = new javax.swing.JTextField();
         lblID = new javax.swing.JLabel();
 
@@ -78,7 +80,7 @@ public class FormProfessor extends javax.swing.JFrame {
             }
         });
 
-        cmbDisciplina.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione", "Matematica", "Historia", "Ciencia da computacao", "Biologia", "Economia", " ", " " }));
+        cmbDisciplina.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione", "Matematica", "Historia", "Ciencia da computacao", "Biologia", "Economia" }));
 
         btnConsultar.setText("Consultar");
         btnConsultar.addActionListener(new java.awt.event.ActionListener() {
@@ -91,6 +93,13 @@ public class FormProfessor extends javax.swing.JFrame {
         btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAtualizarActionPerformed(evt);
+            }
+        });
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
             }
         });
 
@@ -121,8 +130,8 @@ public class FormProfessor extends javax.swing.JFrame {
                                 .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnConsultar))
-                            .addComponent(cmbDisciplina, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbDisciplina, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtIdade, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
@@ -130,10 +139,12 @@ public class FormProfessor extends javax.swing.JFrame {
                 .addContainerGap(129, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnExcluir)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAtualizar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCadastrar)
-                .addGap(16, 16, 16))
+                .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,8 +170,9 @@ public class FormProfessor extends javax.swing.JFrame {
                     .addComponent(cmbDisciplina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCadastrar)
                     .addComponent(btnAtualizar)
-                    .addComponent(btnCadastrar))
+                    .addComponent(btnExcluir))
                 .addGap(21, 21, 21))
         );
 
@@ -177,72 +189,98 @@ public class FormProfessor extends javax.swing.JFrame {
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
         try {
-        Professor p = new Professor();
-        p.setNome(txtNome.getText());
-        p.setIdade(Integer.parseInt(txtIdade.getText()));
-        p.setDisciplina(cmbDisciplina.getSelectedItem().toString());
+            String nome = txtNome.getText().trim();
+            int idade = Integer.parseInt(txtIdade.getText().trim());
+            String disciplina = cmbDisciplina.getSelectedItem().toString();
 
-        new ProfessorDAO().inserir(p);
-        javax.swing.JOptionPane.showMessageDialog(this, "Professor cadastrado com sucesso!");
-        limparCampos();
-        
-    } catch (NumberFormatException ex) {
-        javax.swing.JOptionPane.showMessageDialog(this, "A idade precisa ser um número.");
-    }
-            
+            if (nome.isEmpty() || cmbDisciplina.getSelectedIndex() == 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Preencha o nome e selecione uma disciplina válida.");
+                return;
+            }
+
+            // Exemplo de POO: Instanciação usando construtor sobrecarregado (sem id)
+            Professor p = new Professor(nome, idade, disciplina);
+
+            boolean ok = new ProfessorDAO().inserir(p);
+            if (ok) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Professor cadastrado com sucesso!");
+                limparCampos();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Erro ao inserir professor no banco.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "A idade precisa ser um número inteiro.");
+        }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
         try {
-        int id = Integer.parseInt(txtID.getText());
+            int id = Integer.parseInt(txtID.getText().trim());
 
-        ProfessorDAO dao = new ProfessorDAO();
-        Professor professor = dao.getProfessor(id);
+            ProfessorDAO dao = new ProfessorDAO();
+            Professor professor = dao.getProfessor(id);
 
-        if (professor == null) {
-            javax.swing.JOptionPane.showMessageDialog(this,"Professor não encontrado!");
-        } else {
-            txtNome.setText(professor.getNome());
-            txtIdade.setText(String.valueOf(professor.getIdade()));
-            cmbDisciplina.setSelectedItem(professor.getDisciplina());
+            if (professor == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Professor não encontrado!");
+            } else {
+                txtNome.setText(professor.getNome());
+                txtIdade.setText(String.valueOf(professor.getIdade()));
+                cmbDisciplina.setSelectedItem(professor.getDisciplina());
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Digite um ID numérico válido.");
         }
-
-    } catch (NumberFormatException ex) {
-        javax.swing.JOptionPane.showMessageDialog(this,"Digite um ID válido.");
-    }
     }//GEN-LAST:event_btnConsultarActionPerformed
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         try {
-            
-        Professor professor = new Professor();
+            int id = Integer.parseInt(txtID.getText().trim());
+            String nome = txtNome.getText().trim();
+            int idade = Integer.parseInt(txtIdade.getText().trim());
+            String disciplina = cmbDisciplina.getSelectedItem().toString();
 
-        professor.setId(Integer.parseInt(txtID.getText()));
-        professor.setNome(txtNome.getText());
-        professor.setIdade(Integer.parseInt(txtIdade.getText()));
-        professor.setDisciplina(cmbDisciplina.getSelectedItem().toString());
+            // Exemplo de POO: Instanciação usando construtor completo com ID
+            Professor professor = new Professor(id, nome, idade, disciplina);
 
-        ProfessorDAO dao = new ProfessorDAO();
-        dao.editar(professor);
+            ProfessorDAO dao = new ProfessorDAO();
+            boolean ok = dao.editar(professor);
 
-        javax.swing.JOptionPane.showMessageDialog(this,"Professor atualizado com sucesso!");
-
-        limparCampos();
-
-    } catch (NumberFormatException ex) {
-        javax.swing.JOptionPane.showMessageDialog(this,"ID e idade precisam ser números.");
-    }
-        
+            if (ok) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Professor atualizado com sucesso!");
+                limparCampos();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Erro ao atualizar professor no banco.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID e idade precisam ser números inteiros.");
+        }
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
-    
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int id = Integer.parseInt(txtID.getText().trim());
+            int confirm = javax.swing.JOptionPane.showConfirmDialog(this, "Deseja realmente excluir o professor #" + id + "?", "Confirmar Exclusão", javax.swing.JOptionPane.YES_NO_OPTION);
+            if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+                boolean ok = new ProfessorDAO().excluir(id);
+                if (ok) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Professor excluído com sucesso!");
+                    limparCampos();
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Não foi possível excluir o professor.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Informe um ID numérico para excluir.");
+        }
+    }
+
     private void limparCampos() {
-    txtID.setText("");
-    txtNome.setText("");
-    txtIdade.setText("");
-    cmbDisciplina.setSelectedIndex(0);
-    txtID.requestFocus();
-}
+        txtID.setText("");
+        txtNome.setText("");
+        txtIdade.setText("");
+        cmbDisciplina.setSelectedIndex(0);
+        txtID.requestFocus();
+    }
     
     /**
      * @param args the command line arguments
@@ -250,9 +288,6 @@ public class FormProfessor extends javax.swing.JFrame {
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -273,6 +308,7 @@ public class FormProfessor extends javax.swing.JFrame {
     private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton btnCadastrar;
     private javax.swing.JButton btnConsultar;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JComboBox<String> cmbDisciplina;
     private javax.swing.JLabel lblDisciplina;
     private javax.swing.JLabel lblID;

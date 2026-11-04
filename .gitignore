@@ -1,7 +1,6 @@
 .class
 *.class
 
-*.jar
 *.war
 *.ear
 

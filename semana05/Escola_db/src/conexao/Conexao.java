@@ -1,28 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package conexao;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.SQLException;
 
-
+/**
+ * Classe responsável por gerenciar a conexão com o banco de dados MySQL.
+ * Centraliza os dados de acesso (URL, usuário e senha) em um único local,
+ * evitando duplicação nos DAOs.
+ */
 public class Conexao {
-    public Connection getConexao(){
-        Connection conn;
+    // Parâmetros de conexão com o banco de dados 'escola'
+    private static final String URL = "jdbc:mysql://localhost:3306/escola?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String USUARIO = "root";
+    private static final String SENHA = "laboratorio";
+
+    /**
+     * Abre e retorna uma nova conexão com o MySQL.
+     * @return Objeto Connection aberto ou null em caso de falha.
+     */
+    public Connection getConexao() {
         try {
-            conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/escola?userTimeZone=true&serverTimeZone=UTC",
-                    "root","laboratorio");
-            System.out.println("Conexão efetuada!");
+            Connection conn = DriverManager.getConnection(URL, USUARIO, SENHA);
             return conn;
-        } catch (Exception e) {
-            System.out.println("Erro ao conectar no BD"+e.getMessage());
-            Logger.getLogger(Conexao.class.getName()).log(Level.SEVERE, null, e);
+        } catch (SQLException e) {
+            System.err.println("Erro ao conectar no banco de dados: " + e.getMessage());
+            return null;
         }
-        return  null;
     }
-    
 }

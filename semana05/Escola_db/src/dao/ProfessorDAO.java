@@ -1,108 +1,160 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import beans.Professor;
 import conexao.Conexao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Adminstrador
+ * Data Access Object (DAO) para a entidade Professor.
+ * Responsável pelo acesso e persistência no banco de dados MySQL:
+ * - Inserção (Create)
+ * - Consulta individual e listagens (Read)
+ * - Atualização (Update)
+ * - Exclusão (Delete)
  */
-public class ProfessorDAO{
-    private Conexao conexao;
-    private Connection conn;
+public class ProfessorDAO {
+    private final Conexao conexao;
 
     public ProfessorDAO() {
         this.conexao = new Conexao();
-        this.conn = this.conexao.getConexao();
     }
-    
-    public void inserir (Professor professor){
-        try {
-            String sql = "INSERT INTO professores(nome, idade, disciplina) VALUES (?,?,?);";
-            PreparedStatement stmt = this.conn.prepareStatement(sql);
-            stmt.setString(1,professor.getNome());
-            stmt.setInt(2,professor.getIdade());
-            stmt.setString(3,professor.getDisciplina());
-            
-            stmt.execute();
-        } catch (SQLException ex) {
-            System.out.println("Erro ao inserir professor:"+ex.getMessage());
-        }
-    } 
-    
-     public Professor getProfessor(int id) {
-        String sql = "SELECT * FROM professores WHERE id = ?";
 
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+    /**
+     * Insere um novo professor no banco de dados.
+     */
+    public boolean inserir(Professor professor) {
+        String sql = "INSERT INTO professores (nome, idade, disciplina) VALUES (?, ?, ?)";
 
-            stmt.setInt(1, id);
+        try (Connection conn = conexao.getConexao()) {
+            if (conn == null) return false;
 
-            ResultSet rs = stmt.executeQuery();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, professor.getNome());
+                stmt.setInt(2, professor.getIdade());
+                stmt.setString(3, professor.getDisciplina());
 
-            if (rs.next()) {
-                Professor professor = new Professor();
-
-                professor.setId(rs.getInt("id"));
-                professor.setNome(rs.getString("nome"));
-                professor.setIdade(rs.getInt("idade"));
-                professor.setDisciplina(rs.getString("disciplina"));
-
-                return professor;
+                stmt.executeUpdate();
+                return true;
             }
-
         } catch (SQLException ex) {
-            System.out.println("Erro ao consultar professor: " + ex.getMessage());
+            System.err.println("Erro ao inserir professor: " + ex.getMessage());
+            return false;
         }
+    }
 
+    /**
+     * Consulta um professor pelo ID.
+     */
+    public Professor getProfessor(int id) {
+        String sql = "SELECT id, nome, idade, disciplina FROM professores WHERE id = ?";
+
+        try (Connection conn = conexao.getConexao()) {
+            if (conn == null) return null;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, id);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new Professor(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getInt("idade"),
+                            rs.getString("disciplina")
+                        );
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar professor por ID: " + ex.getMessage());
+        }
         return null;
     }
-     
-     public void editar(Professor professor) {
-        try {
-            String sql = "UPDATE professores SET nome = ?, idade = ?, disciplina = ? WHERE id = ?";
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
+    /**
+     * Atualiza os dados de um professor existente.
+     */
+    public boolean editar(Professor professor) {
+        String sql = "UPDATE professores SET nome = ?, idade = ?, disciplina = ? WHERE id = ?";
 
-            stmt.setString(1, professor.getNome());
-            stmt.setInt(2, professor.getIdade());
-            stmt.setString(3, professor.getDisciplina());
-            stmt.setInt(4, professor.getId());
+        try (Connection conn = conexao.getConexao()) {
+            if (conn == null) return false;
 
-            stmt.execute();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, professor.getNome());
+                stmt.setInt(2, professor.getIdade());
+                stmt.setString(3, professor.getDisciplina());
+                stmt.setInt(4, professor.getId());
 
+                stmt.executeUpdate();
+                return true;
+            }
         } catch (SQLException ex) {
-            System.out.println("Erro ao atualizar professor: " + ex.getMessage());
+            System.err.println("Erro ao atualizar professor: " + ex.getMessage());
+            return false;
         }
     }
 
-     public List<Object[]> listarPorNome(String nome) {
-        List<Object[]> professores = new ArrayList<>();
-        String sql = "SELECT id, nome, idade, disciplina FROM professores WHERE nome LIKE ? ORDER BY nome";
+    /**
+     * Exclui um professor pelo ID.
+     */
+    public boolean excluir(int id) {
+        String sql = "DELETE FROM professores WHERE id = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + nome + "%");
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                professores.add(new Object[]{
-                    rs.getInt("id"),
-                    rs.getString("nome"),
-                    rs.getInt("idade"),
-                    rs.getString("disciplina")
-                });
+        try (Connection conn = conexao.getConexao()) {
+            if (conn == null) return false;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+                return true;
             }
         } catch (SQLException ex) {
-            System.out.println("Erro ao listar professores: " + ex.getMessage());
+            System.err.println("Erro ao excluir professor: " + ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Retorna a lista de todos os professores cadastrados.
+     */
+    public List<Professor> listarTodos() {
+        return listarPorNome("");
+    }
+
+    /**
+     * Retorna lista de professores filtrados por nome, ordenados alfabeticamente.
+     */
+    public List<Professor> listarPorNome(String nome) {
+        List<Professor> professores = new ArrayList<>();
+        String sql = "SELECT id, nome, idade, disciplina FROM professores WHERE nome LIKE ? ORDER BY nome";
+
+        try (Connection conn = conexao.getConexao()) {
+            if (conn == null) return professores;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, "%" + (nome == null ? "" : nome) + "%");
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Professor prof = new Professor(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getInt("idade"),
+                            rs.getString("disciplina")
+                        );
+                        professores.add(prof);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao listar professores: " + ex.getMessage());
         }
 
         return professores;
